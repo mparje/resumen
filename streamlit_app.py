@@ -4,7 +4,6 @@ import PyPDF2
 import io
 import requests
 from typing import List
-from dotenv import load_dotenv
 import os
 
 
