@@ -5,6 +5,7 @@ import io
 import requests
 from typing import List
 import os
+import textwrap
 
 # Configura tu clave de API de OpenAI
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,6 +17,11 @@ def leer_pdf(archivo_pdf) -> str:
         pagina = lector_pdf.load_page(num_pagina)
         texto += pagina.get_text("text")
     return texto
+
+def dividir_texto_en_fragmentos(texto: str, palabras_por_fragmento: int) -> List[str]:
+    palabras = texto.split()
+    fragmentos = textwrap.wrap(" ".join(palabras), width=palabras_por_fragmento)
+    return fragmentos
 
 def resumir_texto(texto: str, palabras_maximas: int) -> str:
     tokens_maximos = palabras_maximas * 1.5  # Estimación para considerar espacios y puntuación
@@ -38,6 +44,16 @@ if archivo_subido:
     with st.spinner("Resumiendo el archivo PDF..."):
         archivo_pdf = io.BytesIO(archivo_subido.read())
         texto = leer_pdf(archivo_pdf)
-        resumen = resumir_texto(texto, palabras_maximas)
+
+        # Divide el texto en fragmentos
+        palabras_por_fragmento = 500
+        fragmentos = dividir_texto_en_fragmentos(texto, palabras_por_fragmento)
+
+        # Resumir cada fragmento y combinar los resultados
+        resumen = ""
+        for fragmento in fragmentos:
+            resumen_fragmento = resumir_texto(fragmento, palabras_maximas)
+            resumen += resumen_fragmento + "\n\n"
+
     st.write("Resumen del archivo PDF:")
     st.write(resumen)
