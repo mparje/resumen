@@ -11,7 +11,7 @@ import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def leer_pdf(archivo_pdf) -> str:
-    lector_pdf = PyPDF2.PdfFileReader(archivo_pdf)
+    lector_pdf = PyPDF2.PdfReader(archivo_pdf)
     texto = ""
     for num_pagina in range(lector_pdf.numPages):
         pagina = lector_pdf.getPage(num_pagina)
